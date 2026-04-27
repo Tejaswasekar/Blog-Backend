@@ -7,7 +7,14 @@ const { connectDB, Stat, Comment } = require('./models');
 const app = express();
 const PORT = process.env.PORT || 5005;
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://blog-frontend-psi-hazel.vercel.app',
+        'http://localhost:5173'
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
 app.use(bodyParser.json());
 
 // Initialize Database connection
