@@ -20,14 +20,24 @@ const Comment = mongoose.model('Comment', commentSchema);
 
 // Connect to MongoDB
 const connectDB = async () => {
+    if (mongoose.connection.readyState >= 1) return;
+
     try {
         const mongoURI = process.env.MONGODB_URI;
-        await mongoose.connect(mongoURI);
-        console.log(`Connected to MongoDB at ${mongoURI}`);
+        if (!mongoURI) {
+            console.error('MONGODB_URI is not defined in environment variables');
+            return;
+        }
+
+        console.log('Attempting to connect to MongoDB...');
+        await mongoose.connect(mongoURI, {
+            serverSelectionTimeoutMS: 5000 // Timeout after 5 seconds instead of 10+
+        });
+        console.log('Connected to MongoDB successfully');
 
         await runDataMigration();
     } catch (err) {
-        console.error('MongoDB connection error:', err);
+        console.error('MongoDB connection error details:', err.message);
     }
 };
 

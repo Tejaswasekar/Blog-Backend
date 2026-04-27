@@ -17,8 +17,13 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-// Initialize Database connection
-connectDB();
+// Route middleware to ensure DB connection
+const ensureConnection = async (req, res, next) => {
+    await connectDB();
+    next();
+};
+
+app.use('/api', ensureConnection);
 
 // Get stats
 app.get('/api/stats', async (req, res) => {
